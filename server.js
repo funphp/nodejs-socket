@@ -8,17 +8,39 @@ var io = require('socket.io')(http);
 app.use(express.static(__dirname + '/public'));
 
 var clientInfo = {};
+//send current users to provided socket
+
+function sendCurrentUsers(socket) {
+    var info = clientInfo[socket.id];
+    var user = [];
+
+    if (typeof info === 'undefined') {
+        return;
+    }
+    Object.keys(clientInfo).forEach(function(socketId){
+        var userInfo = clientInfo[socketId];
+        if (userInfo.room == info.room) {
+            user.push(userInfo.name);
+        }
+    });
+
+    socket.emit('message', {
+        name: 'System',
+        text: 'Current users: '+user.join(' ,'),
+        timestamp : moment().valueOf()
+    })
+}
 io.on('connection', function(socket) {
     console.log('User connected via socket.io');
 
-    socket.on('disconnect', function(){
+    socket.on('disconnect', function() {
         var userData = clientInfo[socket.id];
-        if (typeof userData !=='undefined') {
+        if (typeof userData !== 'undefined') {
             socket.leave(userData.room);
             io.to(userData.room).emit('message', {
                 name: 'System',
-                text: userData.name+ ' has left',
-                timestamp : moment().valueOf()
+                text: userData.name + ' has left',
+                timestamp: moment().valueOf()
             });
             delete clientInfo[socket.id];
         }
@@ -35,10 +57,17 @@ io.on('connection', function(socket) {
     socket.on('message', function(message) {
         console.log('message received:' + message.text);
 
-        //socket.broadcast.emit('message', message); send message except sender
-        message.timestamp = moment().valueOf();
-        io.to(clientInfo[socket.id].room).emit('message', message);
-        // io.emit('message', message); //send to all connected user
+        //check custome command
+        if (message.text == '@currentUsers') {
+                sendCurrentUsers(socket);
+        } else {
+            //socket.broadcast.emit('message', message); send message except sender
+            message.timestamp = moment().valueOf();
+            io.to(clientInfo[socket.id].room).emit('message', message);
+            // io.emit('message', message); //send to all connected user
+        }
+
+
 
     });
     socket.emit('message', {
