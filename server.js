@@ -1,6 +1,7 @@
 var express = require('express');
 var port = process.env.PORT || 3000;
 var app = express();
+var moment = require('moment');
 var http = require('http').Server(app);
 var io = require('socket.io')(http);
 
@@ -13,11 +14,13 @@ io.on('connection', function(socket){
         console.log('message received:' +message.text);
 
         //socket.broadcast.emit('message', message); send message except sender
+        message.timestamp = moment().valueOf();
         io.emit('message', message); //send to all connected user
 
     });
     socket.emit('message', {
-        text: 'Welcome'
+        text: 'Welcome',
+        timestamp: moment().valueOf()
     });
 });
 app.get('/', function(req, res){
