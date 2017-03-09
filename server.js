@@ -20,7 +20,8 @@ io.on('connection', function(socket){
     });
     socket.emit('message', {
         text: 'Welcome',
-        timestamp: moment().valueOf()
+        timestamp: moment().valueOf(),
+        name : 'System'
     });
 });
 app.get('/', function(req, res){
