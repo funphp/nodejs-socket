@@ -5,30 +5,41 @@ var moment = require('moment');
 var http = require('http').Server(app);
 var io = require('socket.io')(http);
 
-app.use(express.static(__dirname+'/public'));
+app.use(express.static(__dirname + '/public'));
 
-io.on('connection', function(socket){
+var clientInfo = {};
+io.on('connection', function(socket) {
     console.log('User connected via socket.io');
 
-    socket.on('message', function(message){
-        console.log('message received:' +message.text);
+    socket.on('joinRoom', function(req) {
+        clientInfo[socket.id] = req;
+        socket.join(req.room);
+        socket.broadcast.to(req.room).emit('message', {
+            name: 'System',
+            text: req.name + ' has join!',
+            timestamp: moment().valueOf()
+        })
+    });
+    socket.on('message', function(message) {
+        console.log('message received:' + message.text);
 
         //socket.broadcast.emit('message', message); send message except sender
         message.timestamp = moment().valueOf();
-        io.emit('message', message); //send to all connected user
+        io.to(clientInfo[socket.id].room).emit('message', message);
+        // io.emit('message', message); //send to all connected user
 
     });
     socket.emit('message', {
         text: 'Welcome',
         timestamp: moment().valueOf(),
-        name : 'System'
+        name: 'System'
     });
 });
-app.get('/', function(req, res){
+app.get('/', function(req, res) {
     res.send('Chat Application');
 });
 
 
-http.listen(port, function(){
-    console.log('Server is running at port: '+port);
+http.listen(port, function() {
+    console.log('Server is running at port: ' + port);
 })
