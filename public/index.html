@@ -1,20 +1,46 @@
-
 <!DOCTYPE html>
 <html>
+
 <head>
-<meta charset="UTF-8">
+    <meta charset="UTF-8">
     <title>Socket.io</title>
-
+    <link rel="stylesheet" type="text/css" href="./css/bootstrap.min.css">
+     <link rel="stylesheet" type="text/css" href="./css/styles.css">
+    <script type="text/javascript" src="/js/jquery-2.2.4.min.js"></script>
+    <script type="text/javascript" src="/js/bootstrap.min.js"></script>
 </head>
-<body>
-<h1> JoinChat</h1>
-<form id="chat-form" name="chatForm" action="/chat.html">
-    <label>Display name</label>
-    <input type="text" name="name" id="name">
-    <label>Room name</label>
-    <input type="text" name="room" id="room">
-    <input type="submit" name="submit" value="Join">
-</form>
 
+<body>
+    <div class="vertical-center">
+        <div class="container">
+            <div class="row">
+                <div class="col-md-4 col-md-offset-4 well">
+                    <h1> JoinChat</h1>
+                    <form id="chat-form" name="chatForm" action="/chat.html">
+                        <div class="form-group">
+                            <label>Display name</label>
+                            <div class="input-group">
+                                <span class="input-group-addon">
+                            <i class="glyphicon glyphicon-user"></i>
+                        </span>
+                                <input type="text" class="form-control" id="name" name="name" placeholder="Name">
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="exampleInputEmail1">Room name</label>
+                            <div class="input-group">
+                                <span class="input-group-addon">
+                            <i class="glyphicon glyphicon-comment"></i>
+                        </span>
+                                <input type="text" class="form-control" id="room" name="room" placeholder="Room">
+                            </div>
+                        </div>
+                        <button type="submit" class="btn btn-primary btn-block">Join</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
 </body>
+
 </html>
